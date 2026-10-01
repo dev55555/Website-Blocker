@@ -1,48 +1,32 @@
+// Blocks a page if it contains several whole-word adult keywords. Requiring a few
+// matches avoids false positives like "Essex" or a single mention in a news article.
 
-// let observer = new MutationObserver(function(mutations) {
-//     mutations.forEach(function(mutation) {
-//       if (mutation.addedNodes) {
-//         for (let i = 0; i < mutation.addedNodes.length; i++) {
-//           let node = mutation.addedNodes[i];
-//           if (node.tagName && (node.tagName.toLowerCase() == "img" || node.tagName.toLowerCase() == "video")) {
-//             node.style.filter = "blur(20px)";
-//           }
-//         }
-//       }
-//     });
-//   });
-  
-//   observer.observe(document.body, { childList: true, subtree: true });
-  
+const KEYWORDS = /\b(porn|porno|pornography|xxx|hentai|nsfw|onlyfans|adult videos?|sex videos?|sex tube)\b/gi;
+const THRESHOLD = 5;
+let blocked = false;
 
-// Blur the page if it contains pornographic content
+async function check() {
+  if (blocked || !document.body) return;
+  const { enabled = true, keywordBlocking = true } =
+    await chrome.storage.sync.get(['enabled', 'keywordBlocking']);
+  if (!enabled || !keywordBlocking) return;
 
-if (document.body.innerText.match(/porn|sex/)) {
-    document.body.style.filter = "blur(5px)";
+  const matches = (document.body.innerText || '').match(KEYWORDS);
+  if (!matches || matches.length < THRESHOLD) return;
+
+  blocked = true;
+  // Hide the page instantly so nothing is visible while the redirect happens.
+  document.documentElement.style.setProperty('display', 'none', 'important');
+  try {
+    await chrome.runtime.sendMessage({ action: 'blockTab' });
+  } catch {
+    // Fallback if the background worker can't be reached: wipe the page.
+    document.documentElement.style.removeProperty('display');
+    document.body.replaceChildren(document.createTextNode('🚫 This page was blocked.'));
+    document.body.style.cssText = 'font:20px system-ui;text-align:center;padding:20vh 0;';
   }
+}
 
-// Listen for messages from the background script
-// chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-//     // If the message is to block pornographic content, blur the page
-//     if (request.action === "blockPorn") {
-//       document.body.style.filter = "blur(5px)";
-//     }
-//   });
-  
-//   // Send a message to the background script to check if the page should be blocked
-//   chrome.runtime.sendMessage({action: "checkForPorn"});
-  
-
-
-// Listen for messages from the background script
-// chrome.runtime.onMessage.addListener(function(request, sender, sendResponse) {
-//     // If the message is to block pornographic content, blur the page
-//     if (request.action === "blockPorn") {
-//       document.body.style.filter = "blur(5px)";
-//       alert("Access to this website has been blocked.");
-//     }
-//   });
-  
-//   // Send a message to the background script to check if the page should be blocked
-//   chrome.runtime.sendMessage({action: "checkForPorn"});
-  
+check();
+setTimeout(check, 1500); // catch pages that render content late
+setTimeout(check, 5000);

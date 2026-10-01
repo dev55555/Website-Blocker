@@ -1,87 +1,40 @@
-<!-- <!DOCTYPE html>
-<html>
-  <head>
-    <title>Porn Blocker</title>
-    <style>
-      body {
-        width: 200px;
-        height: 100px;
-        padding: 10px;
-        font-family: sans-serif;
-      }
-
-      h1 {
-        margin-top: 0;
-        font-size: 18px;
-      }
-
-      p {
-        margin-top: 10px;
-        font-size: 14px;
-        line-height: 1.5;
-      }
-
-      button {
-        display: block;
-        margin-top: 10px;
-        padding: 5px 10px;
-        background-color: #4CAF50;
-        color: white;
-        border: none;
-        border-radius: 3px;
-        cursor: pointer;
-      }
-
-      button:hover {
-        background-color: #3e8e41;
-      }
-    </style>
-  </head>
-  <body>
-    <h1>Porn Blocker</h1>
-    <p>This extension is currently blocking pornographic websites. To disable this feature, click the button below.</p>
-    <button id="toggle-button">Disable Porn Blocker</button>
-    <script src="popup.js"></script>
-  </body>
-</html> -->
-
-
-
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="UTF-8">
-    <title>IP Location Tracker</title>
-    <style>
-      table {
-        border-collapse: collapse;
-        width: 100%;
-      }
-      th, td {
-        text-align: left;
-        padding: 8px;
-        border-bottom: 1px solid #ddd;
-      }
-      th {
-        background-color: #4CAF50;
-        color: white;
-      }
-    </style>
-  </head>
-  <body>
-    <table>
-      <tr>
-        <th>Date/Time</th>
-        <th>IP</th>
-        <th>Provider</th>
-        <th>Country</th>
-        <th>User Agent</th>
-        <th>Referring URL</th>
-      </tr>
-      <tbody id="table-body">
-      </tbody>
-    </table>
-    <a href="#" id="track-link">Track IP location</a>
-    <script src="popup.js"></script>
-  </body>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <header>
+    <h1>Adult Site Blocker</h1>
+    <label class="switch"><input type="checkbox" id="enabled"><span></span></label>
+  </header>
+
+  <p id="status" class="status"></p>
+
+  <button id="block-current" class="primary">Block this site</button>
+
+  <div class="row">
+    <input id="new-site" type="text" placeholder="example.com">
+    <button id="add-site">Add</button>
+  </div>
+  <p id="error" class="error"></p>
+
+  <label class="check"><input type="checkbox" id="keywords"> Block pages containing adult keywords</label>
+  <label class="check"><input type="checkbox" id="pattern-on"> Block look-alike domains (pattern matching)</label>
+
+  <h2>Your blocked sites</h2>
+  <ul id="site-list"></ul>
+
+  <h2>Your blocked patterns</h2>
+  <p class="hint">Matched against the hostname, e.g. <code>xvideos</code> also blocks xvideos2.net. Regex allowed.</p>
+  <div class="row">
+    <input id="new-pattern" type="text" placeholder="brandname or regex">
+    <button id="add-pattern">Add</button>
+  </div>
+  <p id="pattern-error" class="error"></p>
+  <ul id="pattern-list"></ul>
+
+  <script src="popup.js"></script>
+</body>
 </html>

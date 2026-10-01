@@ -1,33 +1,22 @@
 {
-    "manifest_version": 2,
-    "name": "Porn Blocker",
-    "description": "Blurs pornographic websites",
-    "version": "1.0",
-    
-    "permissions": [
-      "https://ipinfo.io/json/",
-      "storage",
-      "tabs",
-      "webRequest",
-      "webRequestBlocking",
-      "<all_urls>"
-    ],
-    "background": {
-      "scripts": ["background.js"],
-      "persistent": true
-    },
-    "content_scripts": [
-      {
-        "matches": ["<all_urls>"],
-        "js": ["content.js"],
-        "run_at": "document_start"
-      }
-    ],
-    "browser_action": {
-      "default_icon": "icon.png",
-      "default_popup": "popup.html",
-      "default_title": "Porn Blocker"
+  "manifest_version": 3,
+  "name": "Adult Site Blocker",
+  "description": "Blocks adult websites, lets you add your own, and blocks pages with adult content.",
+  "version": "2.3",
+  "permissions": ["storage", "declarativeNetRequest", "tabs"],
+  "host_permissions": ["<all_urls>"],
+  "background": { "service_worker": "background.js" },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["content.js"],
+      "run_at": "document_idle"
     }
-  }
-  
-
+  ],
+  "action": {
+    "default_icon": { "16": "icon.png", "48": "icon48.png", "128": "icon128.png" },
+    "default_popup": "popup.html",
+    "default_title": "Adult Site Blocker"
+  },
+  "icons": { "16": "icon.png", "48": "icon48.png", "128": "icon128.png" }
+}
